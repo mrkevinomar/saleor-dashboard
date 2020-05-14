@@ -63,6 +63,7 @@ module.exports = (env, argv) => {
       compress: true,
       contentBase: path.join(__dirname, dashboardBuildPath),
       historyApiFallback: true,
+      host: '0.0.0.0', disableHostCheck: true,
       hot: true,
       port: 9000
     },
