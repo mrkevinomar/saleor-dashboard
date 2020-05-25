@@ -1,0 +1,43 @@
+version: '2.2'
+
+services:
+  
+  dashboard:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile.dev
+      args:
+        API_URI: 'http://localhost:8000/graphql/'
+    ports:
+      - 9000:9000
+    restart: unless-stopped
+    volumes:
+      - ./:/app:cached
+      - /app/node_modules/
+    networks:
+      - saleor-backend-tier
+    command: npm start -- --host 0.0.0.0
+
+  
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: ./Dockerfile.dev
+    volumes:
+      - static_volume:/home/app/static/
+      - saleor-media:/app/media
+    ports:
+      - 80:80
+    links:
+      - dashboard:dashboard
+    depends_on:
+      - dashboard
+    networks:
+      - saleor-backend-tier
+volumes:
+  saleor-media:
+  static_volume:
+
+networks:
+  saleor-backend-tier:
+    driver: bridge
